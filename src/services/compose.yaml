@@ -10,14 +10,16 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
       - KC_DB=mysql
-      - KC_DB_URL=jdbc:mysql://db:3306/keycloak
+      - KC_DB_URL=jdbc:mysql://db-keycloak:3306/keycloak
       - KC_DB_USERNAME=root
       - KC_DB_PASSWORD=root
     depends_on:
-      db:
+      db-keycloak:
         condition: service_healthy
+    networks:
+      - tab-wise
 
-  db:
+  db-keycloak:
     image: mysql:8.0.41-debian
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -29,3 +31,24 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    networks:
+        - tab-wise
+
+  auth-service:
+    image: auth-service
+    build: ./Authentication/
+    ports: 
+      - "5000:5000"
+      - "5001:5001"
+    volumes:
+      - ./Authentication/:/source
+    command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5000"]  # Use dotnet watch for live reloading
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+    restart: always
+    networks:
+      - tab-wise
+
+networks:
+  tab-wise:
+    external: true
