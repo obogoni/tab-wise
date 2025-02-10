@@ -1,6 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddKeycloak();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello My Lord!");
-
+app.AddFeatures();
 app.Run();
