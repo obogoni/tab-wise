@@ -32,20 +32,17 @@ services:
       timeout: 10s
       retries: 3
     networks:
-        - tab-wise
+      - tab-wise
 
   auth-service:
-    image: auth-service
-    build: ./Authentication/
+    image: mcr.microsoft.com/dotnet/sdk:9.0
     ports: 
-      - "5000:5000"
-      - "5001:5001"
+      - 5000:5125
+    working_dir: /app
     volumes:
-      - ./Authentication/:/source
-    command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5000"]  # Use dotnet watch for live reloading
-    environment:
-      - ASPNETCORE_URLS=http://0.0.0.0:5000
-    restart: always
+      - ./Authentication:/app
+    command: ["dotnet", "watch"] 
+    restart: always 
     networks:
       - tab-wise
 
