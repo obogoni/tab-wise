@@ -1,6 +1,6 @@
-using IResult = Microsoft.AspNetCore.Http.IResult;
-using Authentication.Providers;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace Authentication.Features;
 
@@ -9,12 +9,17 @@ public static class LoginEndpoint
     public static void UseLogin(this WebApplication app)
     {
         app.MapGet(Constants.LoginRoute, Login);
+        app.MapGet(Constants.LogoutRoute, Logout);
     }
 
-    private static IResult Login([FromServices] IIdentityProvider identityProvider)
+    private static async Task Login(HttpContext httpContext)
     {
-        var redirectUrl = identityProvider.GetRedirectLoginEndpoint();
+        await httpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    }
 
-        return Results.Redirect(redirectUrl);
+    private static async Task Logout(HttpContext httpContext)
+    {
+        await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 }
