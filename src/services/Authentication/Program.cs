@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(options =>
         options.ResponseType = OpenIdConnectResponseType.Code; // Authorization Code Flow
         options.UsePkce = true; // Enables PKCE automatically
         options.SaveTokens = true; // Stores tokens in session cookies
-        options.CallbackPath = "/callback"; // Redirect URI after login
+        options.CallbackPath = Constants.CallbackRoute; // Redirect URI after login
         options.SignedOutCallbackPath = "/logout-callback"; // Redirect after logout
         options.Scope.Add("openid");
         options.Scope.Add("profile");
@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseLogin();

@@ -1,4 +1,4 @@
-name: auth
+name: tab-wise
 
 services:
   keycloak: 
@@ -25,7 +25,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=keycloak
     volumes:
-      - ./.docker/keycloakdata:/var/lib/mysql
+      - ./services/.docker/keycloakdata:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
@@ -35,17 +35,17 @@ services:
       - tab-wise
 
   auth-service:
-    image: mcr.microsoft.com/dotnet/sdk:9.0
+    build: ./services/Authentication 
     ports: 
       - 5000:5125
-    working_dir: /app
-    volumes:
-      - ./Authentication:/app
-    command: ["dotnet", "watch"] 
-    restart: always 
+    restart: always
+    develop:
+      watch:
+        - action: rebuild
+          path: ./services/Authentication
     networks:
       - tab-wise
 
 networks:
   tab-wise:
-    external: true
+    driver: bridge

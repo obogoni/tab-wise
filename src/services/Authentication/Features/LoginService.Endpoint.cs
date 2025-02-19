@@ -10,6 +10,7 @@ public static class LoginEndpoint
     {
         app.MapGet(Constants.LoginRoute, Login);
         app.MapGet(Constants.LogoutRoute, Logout);
+        app.MapGet(Constants.CallbackRoute, LoginCallback);
     }
 
     private static async Task Login(HttpContext httpContext)
@@ -22,4 +23,6 @@ public static class LoginEndpoint
         await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
+
+    private static string LoginCallback() => "The callback route!";
 }
