@@ -33,19 +33,6 @@ services:
       retries: 3
     networks:
       - tab-wise
-
-  auth-service:
-    build: ./services/Authentication 
-    ports: 
-      - 5000:5125
-    restart: always
-    develop:
-      watch:
-        - action: rebuild
-          path: ./services/Authentication
-    networks:
-      - tab-wise
-
 networks:
   tab-wise:
     driver: bridge
